@@ -5,11 +5,18 @@
 
 #include "random.h"
 
+// Uncomment to enable a slightly broken reallocarray () inline implementation
+//#define INLINE_REALLOCARRAY
+
+#include "openbsd.h"
+
 // Respawn
 #define INITIAL_RESPAWN_CHANCE 80
 #define RESPAWN_CHANCE_DECREMENT 18
 
 #define BALANCE // comment out to test vanilla Pkunk code
+
+//#define TFB_Random arc4random
 
 BOOLEAN respawning (STARSHIP *StarShipPtr)
 {
@@ -32,8 +39,12 @@ BOOLEAN respawning (STARSHIP *StarShipPtr)
 
 int main (void)
 {
+#ifdef WINDOWS
+	TFB_SeedRandom (time (0));
+#else
 	// hey look, you'll need to link with libbsd on linux
 	TFB_SeedRandom ((DWORD)arc4random ());
+#endif
 	int index;
 	
 	/*
