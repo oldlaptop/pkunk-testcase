@@ -67,7 +67,7 @@ int main (void)
 		respawns[index] = 0;
 	}
 
-	for (index = 0; index < 1000000000; index++)
+	for (index = 0; index < 100000000; index++)
 	{
 		STARSHIP guinea_pig;
 		guinea_pig.static_counter = 0;
