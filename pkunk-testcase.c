@@ -9,10 +9,18 @@
 #define INITIAL_RESPAWN_CHANCE 80
 #define RESPAWN_CHANCE_DECREMENT 18
 
+#define BALANCE // comment out to test vanilla Pkunk code
+
 BOOLEAN respawning (STARSHIP *StarShipPtr)
 {
-	if ((signed)((TFB_Random () >> 10) % 100) < (INITIAL_RESPAWN_CHANCE - 1)
-			- (StarShipPtr->static_counter * RESPAWN_CHANCE_DECREMENT))
+	if (
+#ifdef BALANCE
+		(signed)((TFB_Random () >> 10) % 100) < (INITIAL_RESPAWN_CHANCE - 1)
+			- (StarShipPtr->static_counter * RESPAWN_CHANCE_DECREMENT)
+#else
+	   TFB_Random () & 1
+#endif
+	)
 	{
 		StarShipPtr->static_counter++;
 		return TRUE;
@@ -59,18 +67,18 @@ int main (void)
 		respawns[index] = 0;
 	}
 
-	for (index = 0; index < 10000000; index++)
+	for (index = 0; index < 1000000000; index++)
 	{
 		STARSHIP guinea_pig;
 		guinea_pig.static_counter = 0;
 
 		while (respawning (&guinea_pig)); // Run respawns until it dies
 
-		if (guinea_pig.static_counter > count) // We need a bigger array!
+		if (guinea_pig.static_counter >= count) // We need a bigger array!
 		{
-			unsigned long long newcount = guinea_pig.static_counter;
+			unsigned long long newcount = guinea_pig.static_counter + 1;
 			unsigned long long *newrespawns = reallocarray (
-			    respawns, count, sizeof (unsigned long long)
+			    respawns, newcount, sizeof (unsigned long long)
 			);
 
 			if (newrespawns == NULL)
