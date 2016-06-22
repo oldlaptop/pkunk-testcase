@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef __OpenBSD__
+#include <time.h>
+#endif
+
 #include "typedefs.h" // very important: keep on top
 
 #include "random.h"
@@ -37,9 +41,13 @@ BOOLEAN respawning (STARSHIP *StarShipPtr)
 	}
 }
 
+#ifndef __OpenBSD__
+#define reallocarray(old_ptr, count, size) realloc(old_ptr, count*size)
+#endif
+
 int main (void)
 {
-#ifdef WINDOWS
+#ifndef __OpenBSD__
 	TFB_SeedRandom (time (0));
 #else
 	// hey look, you'll need to link with libbsd on linux
